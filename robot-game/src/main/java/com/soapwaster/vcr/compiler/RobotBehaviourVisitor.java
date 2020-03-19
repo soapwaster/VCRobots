@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EvalVisitor extends VCRBaseVisitor<Value> {
+public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
 
     // used to compare floating point numbers
     public static final double SMALL_VALUE = 0.00000000001;
@@ -22,25 +22,25 @@ public class EvalVisitor extends VCRBaseVisitor<Value> {
     private Robot robot;
    
     // store variables (there's only one global scope!)
-    private Map<String, Value> memory = new HashMap<String, Value>();
+    private Map<String, VCRValue> memory = new HashMap<String, VCRValue>();
     
-    public EvalVisitor(Robot robot) {
+    public RobotBehaviourVisitor(Robot robot) {
 		super();
 		this.robot = robot;
 	}
 
 	// assignment/id overrides
     @Override
-    public Value visitAssignment(VCRParser.AssignmentContext ctx) {
+    public VCRValue visitAssignment(VCRParser.AssignmentContext ctx) {
         String id = ctx.ID().getText();
-        Value value = this.visit(ctx.expr());
+        VCRValue value = this.visit(ctx.expr());
         return memory.put(id, value);
     }
 
     @Override
-    public Value visitIdAtom(VCRParser.IdAtomContext ctx) {
+    public VCRValue visitIdAtom(VCRParser.IdAtomContext ctx) {
         String id = ctx.getText();
-        Value value = memory.get(id);
+        VCRValue value = memory.get(id);
         if(value == null) {
             throw new RuntimeException("no such variable: " + id);
         }
@@ -49,147 +49,147 @@ public class EvalVisitor extends VCRBaseVisitor<Value> {
 
     // atom overrides
     @Override
-    public Value visitStringAtom(VCRParser.StringAtomContext ctx) {
+    public VCRValue visitStringAtom(VCRParser.StringAtomContext ctx) {
         String str = ctx.getText();
         // strip quotes
         str = str.substring(1, str.length() - 1).replace("\"\"", "\"");
-        return new Value(str);
+        return new VCRValue(str);
     }
 
     @Override
-    public Value visitNumberAtom(VCRParser.NumberAtomContext ctx) {
-        return new Value(Integer.valueOf(ctx.getText()));
+    public VCRValue visitNumberAtom(VCRParser.NumberAtomContext ctx) {
+        return new VCRValue(Integer.valueOf(ctx.getText()));
     }
 
     @Override
-    public Value visitBooleanAtom(VCRParser.BooleanAtomContext ctx) {
-        return new Value(Boolean.valueOf(ctx.getText()));
+    public VCRValue visitBooleanAtom(VCRParser.BooleanAtomContext ctx) {
+        return new VCRValue(Boolean.valueOf(ctx.getText()));
     }
 
     @Override
-    public Value visitNilAtom(VCRParser.NilAtomContext ctx) {
-        return new Value(null);
+    public VCRValue visitNilAtom(VCRParser.NilAtomContext ctx) {
+        return new VCRValue(null);
     }
 
     // expr overrides
     @Override
-    public Value visitParExpr(VCRParser.ParExprContext ctx) {
+    public VCRValue visitParExpr(VCRParser.ParExprContext ctx) {
         return this.visit(ctx.expr());
     }
 
     @Override
-    public Value visitUnaryMinusExpr(VCRParser.UnaryMinusExprContext ctx) {
-        Value value = this.visit(ctx.expr());
-        return new Value(-value.asDouble());
+    public VCRValue visitUnaryMinusExpr(VCRParser.UnaryMinusExprContext ctx) {
+        VCRValue value = this.visit(ctx.expr());
+        return new VCRValue(-value.asInteger());
     }
 
     @Override
-    public Value visitNotExpr(VCRParser.NotExprContext ctx) {
-        Value value = this.visit(ctx.expr());
-        return new Value(!value.asBoolean());
+    public VCRValue visitNotExpr(VCRParser.NotExprContext ctx) {
+        VCRValue value = this.visit(ctx.expr());
+        return new VCRValue(!value.asBoolean());
     }
 
     @Override
-    public Value visitMultiplicationExpr(@NotNull VCRParser.MultiplicationExprContext ctx) {
+    public VCRValue visitMultiplicationExpr(@NotNull VCRParser.MultiplicationExprContext ctx) {
 
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
+        VCRValue left = this.visit(ctx.expr(0));
+        VCRValue right = this.visit(ctx.expr(1));
 
         switch (ctx.op.getType()) {
             case VCRParser.MULT:
-                return new Value(left.asDouble() * right.asDouble());
+                return new VCRValue(left.asInteger() * right.asInteger());
             case VCRParser.DIV:
-                return new Value(left.asDouble() / right.asDouble());
+                return new VCRValue(left.asInteger() / right.asInteger());
             case VCRParser.MOD:
-                return new Value(left.asDouble() % right.asDouble());
+                return new VCRValue(left.asInteger() % right.asInteger());
             default:
                 throw new RuntimeException("unknown operator: " + VCRParser.tokenNames[ctx.op.getType()]);
         }
     }
 
     @Override
-    public Value visitAdditiveExpr(@NotNull VCRParser.AdditiveExprContext ctx) {
+    public VCRValue visitAdditiveExpr(@NotNull VCRParser.AdditiveExprContext ctx) {
 
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
+        VCRValue left = this.visit(ctx.expr(0));
+        VCRValue right = this.visit(ctx.expr(1));
 
         switch (ctx.op.getType()) {
             case VCRParser.PLUS:
-                return left.isDouble() && right.isDouble() ?
-                        new Value(left.asDouble() + right.asDouble()) :
-                        new Value(left.asString() + right.asString());
+                return left.isInteger() && right.isInteger() ?
+                        new VCRValue(left.asInteger() + right.asInteger()) :
+                        new VCRValue(left.asString() + right.asString());
             case VCRParser.MINUS:
-            	return new Value(left.asDouble() - right.asDouble());
+            	return new VCRValue(left.asInteger() - right.asInteger());
             default:
                 throw new RuntimeException("unknown operator: " + VCRParser.tokenNames[ctx.op.getType()]);
         }
     }
 
     @Override
-    public Value visitRelationalExpr(@NotNull VCRParser.RelationalExprContext ctx) {
+    public VCRValue visitRelationalExpr(@NotNull VCRParser.RelationalExprContext ctx) {
 
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
+        VCRValue left = this.visit(ctx.expr(0));
+        VCRValue right = this.visit(ctx.expr(1));
 
         switch (ctx.op.getType()) {
             case VCRParser.LT:
-                return new Value(left.asDouble() < right.asDouble());
+                return new VCRValue(left.asInteger() < right.asInteger());
             case VCRParser.LTEQ:
-                return new Value(left.asDouble() <= right.asDouble());
+                return new VCRValue(left.asInteger() <= right.asInteger());
             case VCRParser.GT:
-                return new Value(left.asDouble() > right.asDouble());
+                return new VCRValue(left.asInteger() > right.asInteger());
             case VCRParser.GTEQ:
-                return new Value(left.asDouble() >= right.asDouble());
+                return new VCRValue(left.asInteger() >= right.asInteger());
             default:
                 throw new RuntimeException("unknown operator: " + VCRParser.tokenNames[ctx.op.getType()]);
         }
     }
 
     @Override
-    public Value visitEqualityExpr(@NotNull VCRParser.EqualityExprContext ctx) {
+    public VCRValue visitEqualityExpr(@NotNull VCRParser.EqualityExprContext ctx) {
 
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
+        VCRValue left = this.visit(ctx.expr(0));
+        VCRValue right = this.visit(ctx.expr(1));
 
         switch (ctx.op.getType()) {
             case VCRParser.EQ:
-                return left.isDouble() && right.isDouble() ?
-                        new Value(Math.abs(left.asDouble() - right.asDouble()) < SMALL_VALUE) :
-                        new Value(left.equals(right));
+                return left.isInteger() && right.isInteger() ?
+                        new VCRValue(Math.abs(left.asInteger() - right.asInteger()) < SMALL_VALUE) :
+                        new VCRValue(left.equals(right));
             case VCRParser.NEQ:
-                return left.isDouble() && right.isDouble() ?
-                        new Value(Math.abs(left.asDouble() - right.asDouble()) >= SMALL_VALUE) :
-                        new Value(!left.equals(right));
+                return left.isInteger() && right.isInteger() ?
+                        new VCRValue(Math.abs(left.asInteger() - right.asInteger()) >= SMALL_VALUE) :
+                        new VCRValue(!left.equals(right));
             default:
                 throw new RuntimeException("unknown operator: " + VCRParser.tokenNames[ctx.op.getType()]);
         }
     }
 
     @Override
-    public Value visitAndExpr(VCRParser.AndExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        return new Value(left.asBoolean() && right.asBoolean());
+    public VCRValue visitAndExpr(VCRParser.AndExprContext ctx) {
+        VCRValue left = this.visit(ctx.expr(0));
+        VCRValue right = this.visit(ctx.expr(1));
+        return new VCRValue(left.asBoolean() && right.asBoolean());
     }
 
     @Override
-    public Value visitOrExpr(VCRParser.OrExprContext ctx) {
-        Value left = this.visit(ctx.expr(0));
-        Value right = this.visit(ctx.expr(1));
-        return new Value(left.asBoolean() || right.asBoolean());
+    public VCRValue visitOrExpr(VCRParser.OrExprContext ctx) {
+        VCRValue left = this.visit(ctx.expr(0));
+        VCRValue right = this.visit(ctx.expr(1));
+        return new VCRValue(left.asBoolean() || right.asBoolean());
     }
 
     // log override
     @Override
-    public Value visitLog(VCRParser.LogContext ctx) {
-        Value value = this.visit(ctx.expr());
+    public VCRValue visitLog(VCRParser.LogContext ctx) {
+        VCRValue value = this.visit(ctx.expr());
         System.out.println(value);
         return value;
     }
 
     // if override
     @Override
-    public Value visitIf_stat(VCRParser.If_statContext ctx) {
+    public VCRValue visitIf_stat(VCRParser.If_statContext ctx) {
 
         List<VCRParser.Condition_blockContext> conditions =  ctx.condition_block();
 
@@ -197,7 +197,7 @@ public class EvalVisitor extends VCRBaseVisitor<Value> {
 
         for(VCRParser.Condition_blockContext condition : conditions) {
 
-            Value evaluated = this.visit(condition.expr());
+            VCRValue evaluated = this.visit(condition.expr());
 
             if(evaluated.asBoolean()) {
                 evaluatedBlock = true;
@@ -212,14 +212,14 @@ public class EvalVisitor extends VCRBaseVisitor<Value> {
             this.visit(ctx.stat_block());
         }
 
-        return Value.VOID;
+        return VCRValue.VOID;
     }
 
     // while override
     @Override
-    public Value visitWhile_stat(VCRParser.While_statContext ctx) {
+    public VCRValue visitWhile_stat(VCRParser.While_statContext ctx) {
 
-        Value value = this.visit(ctx.expr());
+        VCRValue value = this.visit(ctx.expr());
 
         while(value.asBoolean()) {
 
@@ -230,17 +230,17 @@ public class EvalVisitor extends VCRBaseVisitor<Value> {
             value = this.visit(ctx.expr());
         }
 
-        return Value.VOID;
+        return VCRValue.VOID;
     }
     
     @Override
-    public Value visitMethodCall(MethodCallContext ctx) {
+    public VCRValue visitMethodCall(MethodCallContext ctx) {
     	
     	String methodName = ctx.methodName().getText();
     	switch (methodName) {
 		case "moveTo":{
-			int moveToX = visit(ctx.methodCallArguments().expr(0)).asInt().intValue();
-			int moveToY = visit(ctx.methodCallArguments().expr(1)).asInt().intValue();
+			int moveToX = visit(ctx.methodCallArguments().expr(0)).asInteger().intValue();
+			int moveToY = visit(ctx.methodCallArguments().expr(1)).asInteger().intValue();
 			
 			Position2D movePos = MathUtils.computePositionGivenRange(robot.getPosition(), new Position2D(moveToX, moveToY), robot.getStat().getRange());
 	
@@ -248,8 +248,8 @@ public class EvalVisitor extends VCRBaseVisitor<Value> {
 			break;
 		}
 		case "shootAt":{
-			int shootAtX = visit(ctx.methodCallArguments().expr(0)).asInt().intValue();
-			int shootAtY = visit(ctx.methodCallArguments().expr(1)).asInt().intValue();
+			int shootAtX = visit(ctx.methodCallArguments().expr(0)).asInteger().intValue();
+			int shootAtY = visit(ctx.methodCallArguments().expr(1)).asInteger().intValue();
 			
 			Position2D shootPos = MathUtils.computePositionGivenRange(robot.getPosition(), new Position2D(shootAtX, shootAtY), robot.getStat().getRange());
 			
@@ -257,40 +257,40 @@ public class EvalVisitor extends VCRBaseVisitor<Value> {
 			break;
 		}
 		case "inRange":{
-			int targetX = visit(ctx.methodCallArguments().expr(0)).asInt().intValue();
-			int targetY = visit(ctx.methodCallArguments().expr(1)).asInt().intValue();
+			int targetX = visit(ctx.methodCallArguments().expr(0)).asInteger().intValue();
+			int targetY = visit(ctx.methodCallArguments().expr(1)).asInteger().intValue();
 			
 			Position2D inRangePos = new Position2D(targetX,targetY);
 			
-			Value inRange = new Value(robot.inRange(inRangePos));
+			VCRValue inRange = new VCRValue(robot.inRange(inRangePos));
 			
 //			System.out.println(robot + " " + robot.getPosition() + " : is " + inRangePos + " in my range ? " + inRange);
 			return inRange;
 		}
 		case "closestEnemyX":{
 			int closestX = Game.getInstance().getClosestRobotXFrom(robot);
-			Value closest = new Value(closestX);
+			VCRValue closest = new VCRValue(closestX);
 			return closest;
 		}
 		case "closestEnemyY":{
 			int closestY = Game.getInstance().getClosestRobotYFrom(robot);
-			Value closest = new Value(closestY);
+			VCRValue closest = new VCRValue(closestY);
 			return closest;
 		}
 		case "currentX":{
 			int currentX = robot.getPosition().getX();
-			Value current = new Value(currentX);
+			VCRValue current = new VCRValue(currentX);
 			return current;
 		}
 		case "currentY":{
 			int currentY = robot.getPosition().getY();
-			Value current = new Value(currentY);
+			VCRValue current = new VCRValue(currentY);
 			return current;
 		}
 		default:
 			break;
 		}
     	
-    	return Value.VOID;
+    	return VCRValue.VOID;
     }
 }
