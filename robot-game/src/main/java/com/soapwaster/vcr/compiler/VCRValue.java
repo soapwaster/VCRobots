@@ -1,14 +1,13 @@
 package com.soapwaster.vcr.compiler;
 
-import java.awt.geom.Point2D;
 
-public class Value {
+public class VCRValue {
 
-    public static Value VOID = new Value(new Object());
+    public static VCRValue VOID = new VCRValue(new Object());
 
     final Object value;
     
-    public Value(Object value) {
+    public VCRValue(Object value) {
         this.value = value;
     }
 
@@ -16,22 +15,15 @@ public class Value {
         return (Boolean)value;
     }
 
-    public Integer asDouble() {
+    public Integer asInteger() {
         return (Integer)value;
     }
 
-    public Integer asInt() {
-        return (Integer)value;
-    }
     public String asString() {
         return String.valueOf(value);
     }
 
-    public boolean isDouble() {
-        return value instanceof Integer;
-    }
-    
-    public boolean isInt() {
+    public boolean isInteger() {
         return value instanceof Integer;
     }
 
@@ -56,7 +48,7 @@ public class Value {
             return false;
         }
 
-        Value that = (Value)o;
+        VCRValue that = (VCRValue)o;
 
         return this.value.equals(that.value);
     }
