@@ -1,0 +1,13 @@
+myX = currentX()
+myY = currentY()
+x = closestEnemyX()
+y = closestEnemyY()
+
+if(inRange(x,y)){
+	shootAt(x,y)
+}
+else{
+	moveTo(x+90,y+90)
+    shootAt(x,y)
+    log (y);
+}
