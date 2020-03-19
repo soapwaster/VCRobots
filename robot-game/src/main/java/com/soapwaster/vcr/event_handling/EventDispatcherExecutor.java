@@ -1,19 +1,16 @@
 package com.soapwaster.vcr.event_handling;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 
-public class EventDispatcher implements Runnable {
+public class EventDispatcherExecutor implements Runnable {
 	
-	BlockingDeque<Event> eventQueue;
+	BlockingDeque<Event> eventDeque;
 	Set<Listener> listeners;
 	
 
-	public EventDispatcher(BlockingDeque<Event> eventQueue, Set<Listener> listeners) {
-		this.eventQueue = eventQueue;
+	public EventDispatcherExecutor(BlockingDeque<Event> eventDeque, Set<Listener> listeners) {
+		this.eventDeque = eventDeque;
 		this.listeners = listeners;	
 	}
 
@@ -22,15 +19,18 @@ public class EventDispatcher implements Runnable {
 		while(true) {
 			Event eventToDispatch;
 			try {
-				eventToDispatch = eventQueue.take();
-				System.out.println(eventToDispatch.getSource());
+				eventToDispatch = eventDeque.take();
+				
+				//if the received event is the stop, then stop delivering messages
 				if(eventToDispatch.getClass() == StopEvent.class) {
 					return;
 				}
-				System.out.println(listeners.size());
+				
 				if(!listeners.contains(eventToDispatch.getSource())) {
 					continue;
 				}
+				
+				//if the message is destined to everybody
 				if(eventToDispatch.getDestination() == null) {
 					for (Listener receiver : listeners) {
 						if(!receiver.equals(eventToDispatch.getSource())) {
@@ -42,7 +42,6 @@ public class EventDispatcher implements Runnable {
 					eventToDispatch.getDestination().execute(eventToDispatch);
 				}
 			} catch (InterruptedException e) {
-				System.out.println("Fine");
 				break;
 			}
 			

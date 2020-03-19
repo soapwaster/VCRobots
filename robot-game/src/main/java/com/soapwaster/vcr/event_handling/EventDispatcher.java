@@ -1,41 +1,39 @@
 package com.soapwaster.vcr.event_handling;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingDeque;
 
 
-public class GameEventDispatcher {
+public class EventDispatcher {
 	
 	public BlockingDeque<Event> eventQueue;
 	public Set<Listener> listeners;
 	private Thread dispatcherThread;
 	
-	public GameEventDispatcher() {
+	public EventDispatcher() {
 		eventQueue = new LinkedBlockingDeque<Event>();
-		listeners = new HashSet<>();	
 		listeners = new CopyOnWriteArraySet<Listener>();
 	}
 	
-	public void registerListener(Listener listeners) {
-		this.listeners.add(listeners);	
-	}
-	
-	public void addListener(Listener lr) {
-		if(lr == null) {
+	public void registerListener(Listener listener) {
+		if(listener == null) {
 			return;
 		}
-		listeners.add(lr);
+		listeners.add(listener);
 	}
 	
-	public void removeListener(Listener lr) {
-		listeners.remove(lr);
+	public void unregisterListener(Listener listener) {
+		listeners.remove(listener);
 		
 	}
-
+	
+	/**
+	 * Adds an event to the event queue. If it has HIGH_PRIORITY, it will be put 
+	 * on top of the queue to be executed first
+	 * @param e an event
+	 */
 	public void addEvent(Event e) {
 		if(e == null) {
 			return;
@@ -49,11 +47,17 @@ public class GameEventDispatcher {
 		
 	}
 	
+	/**
+	 * Starts the dispatcher
+	 */
 	public void startDispatcher() {
-		dispatcherThread = new Thread(new EventDispatcher(eventQueue, listeners));
+		dispatcherThread = new Thread(new EventDispatcherExecutor(eventQueue, listeners));
 		dispatcherThread.start();
 	}
 	
+	/**
+	 * Stops the dispatcher
+	 */
 	public void stopDispatcher() {
 		this.addEvent(new StopEvent(null, null));
 	}
