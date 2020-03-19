@@ -1,52 +1,61 @@
 package com.soapwaster.vcr.event_handling;
 
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.LinkedBlockingDeque;
 
-public class EventDispatcher implements Runnable {
-	
-	BlockingDeque<Event> eventQueue;
-	Set<Listener> listeners;
-	
 
-	public EventDispatcher(BlockingDeque<Event> eventQueue, Set<Listener> listeners) {
-		this.eventQueue = eventQueue;
-		this.listeners = listeners;	
+public class GameEventDispatcher {
+	
+	public BlockingDeque<Event> eventQueue;
+	public Set<Listener> listeners;
+	private Thread dispatcherThread;
+	
+	public GameEventDispatcher() {
+		eventQueue = new LinkedBlockingDeque<Event>();
+		listeners = new HashSet<>();	
+		listeners = new CopyOnWriteArraySet<Listener>();
 	}
-
-	@Override
-	public void run() {
-		while(true) {
-			Event eventToDispatch;
-			try {
-				eventToDispatch = eventQueue.take();
-				System.out.println(eventToDispatch.getSource());
-				if(eventToDispatch.getClass() == StopEvent.class) {
-					return;
-				}
-				System.out.println(listeners.size());
-				if(!listeners.contains(eventToDispatch.getSource())) {
-					continue;
-				}
-				if(eventToDispatch.getDestination() == null) {
-					for (Listener receiver : listeners) {
-						if(!receiver.equals(eventToDispatch.getSource())) {
-							receiver.execute(eventToDispatch);
-						}
-					}
-				}
-				else {
-					eventToDispatch.getDestination().execute(eventToDispatch);
-				}
-			} catch (InterruptedException e) {
-				System.out.println("Fine");
-				break;
-			}
-			
+	
+	public void registerListener(Listener listeners) {
+		this.listeners.add(listeners);	
+	}
+	
+	public void addListener(Listener lr) {
+		if(lr == null) {
+			return;
 		}
+		listeners.add(lr);
+	}
+	
+	public void removeListener(Listener lr) {
+		listeners.remove(lr);
+		
 	}
 
+	public void addEvent(Event e) {
+		if(e == null) {
+			return;
+		}
+		if(e.getPriority().equals(Priority.HIGH_PRIORITY)) {
+			eventQueue.offerFirst(e);
+		}
+		else {
+			eventQueue.offerLast(e);
+		}
+		
+	}
+	
+	public void startDispatcher() {
+		dispatcherThread = new Thread(new EventDispatcher(eventQueue, listeners));
+		dispatcherThread.start();
+	}
+	
+	public void stopDispatcher() {
+		this.addEvent(new StopEvent(null, null));
+	}
+	
 }
