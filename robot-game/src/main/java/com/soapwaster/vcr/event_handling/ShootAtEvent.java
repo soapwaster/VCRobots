@@ -22,5 +22,10 @@ public class ShootAtEvent extends Event{
 		return damage;
 	}
 	
+	@Override
+	public EventTypeEnum getType() {
+		return EventTypeEnum.ShootAt;
+	}
+	
 	
 }

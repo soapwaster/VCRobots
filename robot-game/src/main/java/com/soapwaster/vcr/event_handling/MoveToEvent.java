@@ -14,5 +14,10 @@ public class MoveToEvent extends Event{
 	public Position2D getPosition() {
 		return movePosition;
 	}
+	
+	@Override
+	public EventTypeEnum getType() {
+		return EventTypeEnum.MoveTo;
+	}
 
 }

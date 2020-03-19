@@ -6,4 +6,8 @@ public class StopEvent extends Event {
 		super(source, destination,Priority.HIGH_PRIORITY);
 	}
 
+	@Override
+	public EventTypeEnum getType() {
+		return EventTypeEnum.Stop;
+	}
 }
