@@ -8,13 +8,12 @@ import com.soapwaster.vcr.behaviour.AIBehaviour;
 import com.soapwaster.vcr.behaviour.BehaviourEnum;
 import com.soapwaster.vcr.behaviour.BehaviourFactory;
 import com.soapwaster.vcr.behaviour.BehaviourFactoryException;
-import com.soapwaster.vcr.event_handling.DeadEvent;
 import com.soapwaster.vcr.event_handling.Event;
 import com.soapwaster.vcr.event_handling.Listener;
 import com.soapwaster.vcr.robot_game.Game;
 import com.soapwaster.vcr.robot_game.Position2D;
-import com.soapwaster.vcr.stats.ConcreteStats;
-import com.soapwaster.vcr.stats.IStats;
+import com.soapwaster.vcr.stats.RobotStats;
+import com.soapwaster.vcr.stats.Stats;
 import com.soapwaster.vcr.utils.MathUtils;
 
 import jdk.nashorn.api.tree.NewTree;
@@ -24,16 +23,28 @@ public abstract class Robot implements Listener{
 	private AIBehaviour behaviour;
 	protected Position2D position;
 	private PropertyChangeSupport support;
-	private IStats stat;
-	private double health = 100.0;
+	private Stats stats;
+	private int health;
 	private String name;
 	boolean dead = false;
 	
+	/**
+	 * Default constructor. Sets all value by default
+	 * <ul>
+	 * 	<li> Health : 100 HP</li>
+	 * 	<li> Damage : 5 units</li>
+	 * 	<li> Range  : 30 units</li>
+	 * 	<li> Position  : Center of the game space</li>
+	 * 	<li> Behaviour : Default Behaviour </li>
+	 * </ul>
+	 * @param name Robot name
+	 */
 	public Robot(String name){
-		support = new PropertyChangeSupport(this);
 		this.name = name;
-		stat = new ConcreteStats(30, 40);
-		position = new Position2D(15, 15);
+		this.health = 100;
+		this.support = new PropertyChangeSupport(this);
+		this.stats = new RobotStats(30, 5);
+		this.position = new Position2D(Game.MAX_X / 2, Game.MAX_X / 2);
 		try {
 			behaviour = new BehaviourFactory(this).getBehaviour(BehaviourEnum.Default);
 		} catch (IOException e) {
@@ -44,6 +55,11 @@ public abstract class Robot implements Listener{
 		
 	}
 	
+	/**
+	 * Sets all default values but the behaviour which can be decided
+	 * @param name Robot name
+	 * @param behaviourType behaviour type
+	 */
 	public Robot(String name, BehaviourEnum behaviourType){
 		this(name);
 		try {
@@ -55,16 +71,41 @@ public abstract class Robot implements Listener{
 		}
 	}
 	
-	public void startTurn() {
+	/**
+	 * Sets all default values but the behaviour and the position which can be decided
+	 * @param name Robot name
+	 * @param behaviourType behaviour type
+	 * @param position in game position
+	 */
+	public Robot(String name, BehaviourEnum behaviourType, Position2D position){
+		this(name, behaviourType);
+		this.position = position;
+	}
+	
+	public void setStat(Stats s) {
+		this.stats = s;
+	}
+	
+	public Stats getStat() {
+		return stats;
+	}
+	public Position2D getPosition() {
+		return position;
+	}
+	
+	public double getHealth() {
+		return health;
+	}
+	
+	public boolean isDead() {
+		return dead;
+	}
+	
+	/**
+	 * Starts performing Robot's behaviour
+	 */
+	public void runBehaviour() {
 		behaviour.startTurn();
-	}
-	
-	public void setStat(IStats s) {
-		this.stat = s;
-	}
-	
-	public IStats getStat() {
-		return stat;
 	}
 	
 	public void decreaseHealth(double decreaseAmount) {
@@ -74,31 +115,36 @@ public abstract class Robot implements Listener{
 		}
 	}
 	
+	/**
+	 * Moves the robot to the desired position. It gets normalized if it is not
+	 * @param position desired position
+	 */
 	public void moveTo(Position2D position) {
-		Position2D newPosition = position;
-		
-		//compute new position. If it hits the wall, get out from the other side.
-		newPosition = new Position2D(position.getX(), position.getY());
-		
-		System.out.println(this + " moved to " + newPosition);
-		this.position = newPosition;
+		this.position = new Position2D(position.getX(), position.getY());	 
 	}
 	
+	/**
+	 * Checks whether a target position is within personal range
+	 * @param targetPosition
+	 * @return true if it reachable, false otherwise
+	 */
 	public boolean inRange(Position2D targetPosition) {
-		return MathUtils.distance(position, targetPosition) <= stat.getRange();
+		return MathUtils.distance(position, targetPosition) <= stats.getRange();
 	}
 	
-	public void shootAt(Position2D position) {
-		this.position = position;
-	}
-	
+	/**
+	 * Returns whether the robot would receive damage if hit in hitPosition radius
+	 * @param hitPosition 
+	 * @return true if robot is in hitPosition radius, false otherwise
+	 */
 	boolean receiveDamageIn(Position2D hitPosition) {
+		int hitRadius = 10;
 		int currentX = getPosition().getX();
 		int currentY = getPosition().getY();
 		
-		System.out.println("Trying to get damage in " + hitPosition);
-		if(currentX-10 < hitPosition.getX() && hitPosition.getX() < currentX+10 && 
-				currentY-10 < hitPosition.getY() && hitPosition.getY() < currentY+10) {
+		//checks a 10 units radius around the position, to see whether the player is inside it
+		if(currentX-hitRadius < hitPosition.getX() && hitPosition.getX() < currentX+hitRadius && 
+				currentY-hitRadius < hitPosition.getY() && hitPosition.getY() < currentY+hitRadius) {
 			return true;
 		}
 		return false;
@@ -114,38 +160,48 @@ public abstract class Robot implements Listener{
 		return name;
 	}
 	
-	public Position2D getPosition() {
-		return position;
-	}
-	
-	public double getHealth() {
-		return health;
-	}
-
-	public boolean isDead() {
-		return dead;
-	}
-	
+	/**
+	 * Adds a listener to the PropertyChangeListener
+	 * @param pcl
+	 */
 	public void addPropertyChangeListener(PropertyChangeListener pcl) {
 	    support.addPropertyChangeListener(pcl);
 	}
-	 
+	
+	/**
+	 * Removes a listener to the PropertyChangeListener
+	 * @param pcl
+	 */
 	public void removePropertyChangeListener(PropertyChangeListener pcl) {
 	    support.removePropertyChangeListener(pcl);
 	}
 	
+	/**
+	 * Notifies all PropertyChangeListeners when the Robot moves
+	 * @param movePosition the position the Robot has moved
+	 */
 	public void notifySupportMovement(Position2D movePosition) {
         support.firePropertyChange("move", new Position2D(-1,-1) , movePosition);
     }
 	
+	/**
+	 * Notifies all PropertyChangeListeners when some Robot has shot
+	 * @param shootPosition the position of the shot
+	 */
 	public void notifySupportShoot(Position2D shootPosition) {
         support.firePropertyChange("shoot", new Position2D(-1,-1) , shootPosition);
     }
 	
+	/**
+	 * Notifies all PropertyChangeListeners when the Robot has been hit
+	 */
 	public void notifySupportHit() {
         support.firePropertyChange("hit", 0, this.getHealth());
     }
 
+	/**
+	 * Notifies all PropertyChangeListeners when the Robot stats have been updated
+	 */
 	public void notifyStatChange() {
 		support.firePropertyChange("stat", 0, this.getHealth());
 	}
