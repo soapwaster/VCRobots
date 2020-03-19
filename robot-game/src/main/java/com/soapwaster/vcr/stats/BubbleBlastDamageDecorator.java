@@ -1,8 +1,11 @@
 package com.soapwaster.vcr.stats;
 
-public class BubbleBlastDamageDecorator extends StatDecorator{
+/**
+ * Decorator that improves the damage statistics only
+ */
+public class BubbleBlastDamageDecorator extends StatsDecorator{
 	
-	public BubbleBlastDamageDecorator(IStats stat) {
+	public BubbleBlastDamageDecorator(Stats stat) {
 		this.stat = stat;
 	}
 

@@ -2,12 +2,12 @@ package com.soapwaster.vcr.behaviour;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import com.soapwaster.vcr.compiler.EvalVisitor;
+import com.soapwaster.vcr.compiler.RobotBehaviourVisitor;
 import com.soapwaster.vcr.robot.Robot;
 
 public abstract class AIBehaviour {
 	
-	EvalVisitor visitor;
+	RobotBehaviourVisitor visitor;
 	ParseTree tree = null;
 	String filename = null;
 	Robot robot;
@@ -17,7 +17,7 @@ public abstract class AIBehaviour {
 	public AIBehaviour(Robot robot) {
 		super();
 		this.robot = robot;
-		this.visitor = new EvalVisitor(robot);
+		this.visitor = new RobotBehaviourVisitor(robot);
 	}
 
 	public String getAIFilename() {

@@ -1,8 +1,11 @@
 package com.soapwaster.vcr.stats;
 
-public class AimEnchanterDecorator extends StatDecorator{
+/**
+ * Decorator that improves the range statistics only
+ */
+public class AimEnchanterDecorator extends StatsDecorator{
 	
-	public AimEnchanterDecorator(IStats stat) {
+	public AimEnchanterDecorator(Stats stat) {
 		this.stat = stat;
 	}
 

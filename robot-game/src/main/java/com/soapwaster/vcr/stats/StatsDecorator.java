@@ -1,8 +1,8 @@
 package com.soapwaster.vcr.stats;
 
-public abstract class StatDecorator implements IStats{
+public abstract class StatsDecorator implements Stats{
 
-	protected IStats stat;
+	protected Stats stat;
 	
 	@Override
 	public String toString() {
