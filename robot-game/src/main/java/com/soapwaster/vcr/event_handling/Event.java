@@ -35,5 +35,7 @@ public abstract class Event {
 		} else
 			return false;
 	}
+	
+	public abstract EventTypeEnum getType();
 
 }
