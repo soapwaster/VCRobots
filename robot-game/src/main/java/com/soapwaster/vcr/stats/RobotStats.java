@@ -1,11 +1,11 @@
 package com.soapwaster.vcr.stats;
 
-public class ConcreteStats implements IStats{
+public class RobotStats implements Stats{
 	
 	private int range;
 	private double damage;
 	
-	public ConcreteStats(int range, double damage) {
+	public RobotStats(int range, double damage) {
 		super();
 		this.range = range;
 		this.damage = damage;

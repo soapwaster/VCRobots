@@ -10,8 +10,8 @@ public class StatsFactory {
     	this.robot = robot;
     }
     
-    public IStats getRandomStat (){
-        IStats statEnchanter = null;
+    public Stats getRandomStat (){
+        Stats statEnchanter = null;
         
         int rand = (int) (Math.random() * 3);
         switch (rand){

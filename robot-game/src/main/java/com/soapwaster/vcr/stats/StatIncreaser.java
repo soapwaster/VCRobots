@@ -1,12 +1,10 @@
-package com.soapwaster.vcr.robot_game;
+package com.soapwaster.vcr.stats;
 
 import java.util.List;
 
 import com.soapwaster.vcr.event_handling.StatEnchantEvent;
 import com.soapwaster.vcr.robot.Robot;
-import com.soapwaster.vcr.stats.AimEnchanterDecorator;
-import com.soapwaster.vcr.stats.IStats;
-import com.soapwaster.vcr.stats.StatsFactory;
+import com.soapwaster.vcr.robot_game.Game;
 
 public class StatIncreaser implements Runnable{
 	
@@ -24,7 +22,7 @@ public class StatIncreaser implements Runnable{
 			int rand = (int) (Math.random() * robotPlayers.size());
 			Robot chosenRobot = robotPlayers.get(rand);
 		
-			IStats statEnchanter = new StatsFactory(chosenRobot).getRandomStat();
+			Stats statEnchanter = new StatsFactory(chosenRobot).getRandomStat();
 			
 			Game.getInstance().getMainEventDispatcher().addEvent(new StatEnchantEvent(chosenRobot, chosenRobot, statEnchanter));
 			

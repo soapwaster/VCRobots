@@ -1,18 +1,23 @@
 package com.soapwaster.vcr.event_handling;
 
-import com.soapwaster.vcr.stats.IStats;
+import com.soapwaster.vcr.stats.Stats;
 
 public class StatEnchantEvent extends Event {
 	
-	IStats statEnchanter;
+	Stats statEnchanter;
 	
-	public StatEnchantEvent(Listener source, Listener destination, IStats statEnchanter) {
+	public StatEnchantEvent(Listener source, Listener destination, Stats statEnchanter) {
 		super(source, destination);
 		this.statEnchanter = statEnchanter;
 	}
 	
-	public IStats getStatEnchanter() {
+	public Stats getStatEnchanter() {
 		return statEnchanter;
+	}
+
+	@Override
+	public EventTypeEnum getType() {
+		return EventTypeEnum.StatEnchant;
 	}
 
 }
