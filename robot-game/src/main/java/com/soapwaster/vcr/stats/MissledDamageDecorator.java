@@ -1,8 +1,11 @@
 package com.soapwaster.vcr.stats;
 
-public class MissledDamageDecorator extends StatDecorator{
+/**
+ * Decorator that improves both range and damage statistics
+ */
+public class MissledDamageDecorator extends StatsDecorator{
 	
-	public MissledDamageDecorator(IStats iStats) {
+	public MissledDamageDecorator(Stats iStats) {
 		this.stat = iStats;
 	}
 
