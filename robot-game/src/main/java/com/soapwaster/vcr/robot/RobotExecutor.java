@@ -30,36 +30,35 @@ public class RobotExecutor {
 		
 		switch (eventName) {
 		case MoveTo:{
-			
 			MoveToEvent moveEvent = (MoveToEvent) event;
-			Position2D movePos = moveEvent.getPosition();
 			
+			Position2D movePos = moveEvent.getPosition();
 			robot.moveTo(movePos);
 			robot.notifySupportMovement(movePos);
-			System.out.println(robot.toString() + " moved to " + moveEvent.getPosition());
+			
+			robot.notifySupportLog("moved to " + moveEvent.getPosition());
 			break;
 		}
 		case ShootAt:{
-			
 			ShootAtEvent shootEvent = (ShootAtEvent) event;
-			
 			robot.notifySupportShoot(shootEvent.getPosition());
+			
 			if(robot.receiveDamageIn(shootEvent.getPosition())) {
 				robot.decreaseHealth(shootEvent.getDamage());
 				robot.notifySupportHit();
+				robot.notifySupportLog("got hit by " + event.getSource() + " (" + robot.getHealth()+ " HP left)");
 				if(robot.getHealth() <= 0) {
 					Game.getInstance().getMainEventDispatcher().addEvent(new DeadEvent(robot, robot));
 				}
 			}
-			System.out.println(robot + " " + robot.getPosition()+" : " + event.getSource() + " shot at " + shootEvent.getPosition());
 			break;
 		}
 		case Dead:{
-			
-			System.out.println(robot + " just died");
 			Game.getInstance().removeRobot(robot);
 			Game.getInstance().getMainEventDispatcher().unregisterListener(robot);
 			robot.dead = true;
+			
+			robot.notifySupportLog("died");
 			break;
 		}
 		case StatEnchant: {
@@ -67,7 +66,7 @@ public class RobotExecutor {
 			robot.setStat(statEvent.getStatEnchanter());
 			robot.notifyStatChange();
 			
-			System.out.println(robot + " : receiving powerup, " + robot.getStat());
+			robot.notifySupportLog("received " + statEvent.getStatEnchanter().getClass().getSimpleName() + " powerup !");
 			break;
 		}
 		default:
