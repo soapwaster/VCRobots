@@ -11,8 +11,8 @@ public class RobotViewStats {
 	private JLabel hpLabel;
 	private JLabel rangeLabel;
 	private JLabel damageLabel;
-	private Position2D lastHitmark;
-	private Color color;
+	private Position2D lastHitmark; //last position the robot hit with a shot
+	private Color color; //color of the robot is the view
 	
 	public RobotViewStats() {
 		lastHitmark = new Position2D(-1, -1, false);
