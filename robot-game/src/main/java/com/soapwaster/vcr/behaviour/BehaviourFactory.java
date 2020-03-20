@@ -35,9 +35,6 @@ public class BehaviourFactory {
             case Default:
                 behaviour = new DefaultBehaviour(robot);
                 break;
-            case Crazy:
-                behaviour = new CrazyBehaviour(robot);
-                break;
             case Shooter:
             	behaviour = new ShooterBehaviour(robot);
             	break;
