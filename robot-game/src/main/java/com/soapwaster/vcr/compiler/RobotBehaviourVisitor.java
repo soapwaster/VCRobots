@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("deprecation")
 public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
 
     // used to compare floating point numbers
@@ -183,7 +184,6 @@ public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
     @Override
     public VCRValue visitLog(VCRParser.LogContext ctx) {
         VCRValue value = this.visit(ctx.expr());
-        System.out.println(value);
         return value;
     }
 
