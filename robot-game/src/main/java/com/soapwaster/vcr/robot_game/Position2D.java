@@ -43,8 +43,8 @@ public class Position2D {
 	 * Normalizes the point, so that if it exceeds game limits, it just restart from 0. Makes it circular
 	 */
 	public void normalize() {
-		x = ((x % Game.MAX_X) + Game.MAX_X) % Game.MAX_X;
-		y = ((y % Game.MAX_Y) + Game.MAX_Y) % Game.MAX_Y;
+		x = ((x % Game.WIDTH) + Game.WIDTH) % Game.WIDTH;
+		y = ((y % Game.HEIGHT) + Game.HEIGHT) % Game.HEIGHT;
 	}
 
 	@Override
