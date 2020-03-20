@@ -15,16 +15,15 @@ import com.soapwaster.vcr.robot_game.Position2D;
 import com.soapwaster.vcr.stats.RobotStats;
 import com.soapwaster.vcr.stats.Stats;
 import com.soapwaster.vcr.utils.MathUtils;
-
-import jdk.nashorn.api.tree.NewTree;
+import com.soapwaster.vcr.view.PropertyChangeType;
 
 public abstract class Robot implements Listener{
 	
-	private AIBehaviour behaviour;
+	protected AIBehaviour behaviour;
 	protected Position2D position;
 	private PropertyChangeSupport support;
 	private Stats stats;
-	private int health;
+	protected double health;
 	private String name;
 	boolean dead = false;
 	
@@ -44,7 +43,7 @@ public abstract class Robot implements Listener{
 		this.health = 100;
 		this.support = new PropertyChangeSupport(this);
 		this.stats = new RobotStats(30, 5);
-		this.position = new Position2D(Game.MAX_X / 2, Game.MAX_X / 2);
+		this.position = new Position2D(Game.WIDTH / 2, Game.WIDTH / 2);
 		try {
 			behaviour = new BehaviourFactory(this).getBehaviour(BehaviourEnum.Default);
 		} catch (IOException e) {
@@ -181,7 +180,7 @@ public abstract class Robot implements Listener{
 	 * @param movePosition the position the Robot has moved
 	 */
 	public void notifySupportMovement(Position2D movePosition) {
-        support.firePropertyChange("move", new Position2D(-1,-1) , movePosition);
+        support.firePropertyChange(PropertyChangeType.Move.toString(), new Position2D(-1,-1) , movePosition);
     }
 	
 	/**
@@ -189,21 +188,35 @@ public abstract class Robot implements Listener{
 	 * @param shootPosition the position of the shot
 	 */
 	public void notifySupportShoot(Position2D shootPosition) {
-        support.firePropertyChange("shoot", new Position2D(-1,-1) , shootPosition);
+        support.firePropertyChange(PropertyChangeType.Shoot.toString(), new Position2D(-1,-1) , shootPosition);
     }
 	
 	/**
 	 * Notifies all PropertyChangeListeners when the Robot has been hit
 	 */
 	public void notifySupportHit() {
-        support.firePropertyChange("hit", 0, this.getHealth());
+        support.firePropertyChange(PropertyChangeType.Hit.toString(), 0, this.getHealth());
     }
 
 	/**
 	 * Notifies all PropertyChangeListeners when the Robot stats have been updated
 	 */
 	public void notifyStatChange() {
-		support.firePropertyChange("stat", 0, this.getHealth());
+		support.firePropertyChange(PropertyChangeType.Stats.toString(), 0, this.getHealth());
+	}
+	
+	/**
+	 * Notifies all PropertyChangeListeners that this Robot has won the game
+	 */
+	public void notifySupportWin() {
+		support.firePropertyChange(PropertyChangeType.Win.toString(), 0, this);
+	}
+
+	/**
+	 * Notifies all PropertyChangeListeners about some log event
+	 */
+	public void notifySupportLog(String logDescription) {
+		support.firePropertyChange(PropertyChangeType.Log.toString(), 0, logDescription);
 	}
 	
 	
