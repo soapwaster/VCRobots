@@ -11,7 +11,7 @@ public class DefaultBehaviour extends AIBehaviour {
 
 	public DefaultBehaviour(Robot robot) {
 		super(robot);
-		this.filename = "src/main/resources/robot_ai/test.vcr";
+		this.filename = "src/main/resources/robot_ai/default.vcr";
 	}
 
 }
