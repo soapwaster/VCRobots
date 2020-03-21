@@ -180,13 +180,6 @@ public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
         return new VCRValue(left.asBoolean() || right.asBoolean());
     }
 
-    // log override
-    @Override
-    public VCRValue visitLog(VCRParser.LogContext ctx) {
-        VCRValue value = this.visit(ctx.expr());
-        return value;
-    }
-
     // if override
     @Override
     public VCRValue visitIf_stat(VCRParser.If_statContext ctx) {
@@ -285,6 +278,22 @@ public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
 			int currentY = robot.getPosition().getY();
 			VCRValue current = new VCRValue(currentY);
 			return current;
+		}
+		case "gameX":{
+			VCRValue gameX = new VCRValue(Game.WIDTH - 1);
+			return gameX;
+		}
+		case "gameY":{
+			VCRValue gameY = new VCRValue(Game.HEIGHT - 1);
+			return gameY;
+		}
+		case "hp":{
+			VCRValue hp = new VCRValue((int)robot.getHealth());
+			return hp;
+		}
+		case "range":{
+			VCRValue range = new VCRValue(robot.getStat().getRange());
+			return range;
 		}
 		default:
 			break;
