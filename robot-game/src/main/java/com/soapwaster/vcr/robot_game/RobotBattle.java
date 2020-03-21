@@ -88,6 +88,9 @@ public class RobotBattle
             gameHeight = Integer.valueOf(Optional.ofNullable(gameSizeValue[1]).orElse("1000"));
         }
         
+        //This sets up the dimensions in advance. So that robot positions are not normalized with default values
+        Game.WIDTH = gameWidth;
+        Game.HEIGHT = gameHeight;
         
         
         Boolean randomPositions = Boolean.valueOf(cmd.getOptionValue("rp"));
@@ -130,7 +133,8 @@ public class RobotBattle
 		}
         
         Game.getInstance().setupGame(robots, randomPositions, gameWidth, gameHeight, powerupInterval);
-    	Game.getInstance().startGame();
+        Game.getInstance().startGame();
+    	
    
     }
 }
