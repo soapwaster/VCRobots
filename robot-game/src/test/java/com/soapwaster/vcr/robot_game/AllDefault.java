@@ -8,10 +8,10 @@ public class AllDefault {
 	@Test
 	public void allDefaultRandom() throws InterruptedException {
 		String[] args = new String[12];
-		String r1 = "Valerio,Default,100,100";
-		String r2 = "Federica,Default,900,900";
-		String r3 = "Federica,Default,100,900";
-		String r4 = "Mamma,Default,900,100";
+		String r1 = "Valerio,Default,10,10";
+		String r2 = "Manolo,Default,900,900";
+		String r3 = "Priscilla,src/main/resources/robot_ai/hider.vcr,900,60";
+		String r4 = "Olimpodeo,Default,50,900";
 		String sizex = "1000";
 		String sizey = "1000";
 		String random = "true";

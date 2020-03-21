@@ -1,0 +1,17 @@
+x = currentX()
+y = currentY()
+
+desiredX = gameX() - 30
+desiredY = 30
+
+if(x != desiredX && y != desiredY){
+	moveTo(desiredX, desiredY)
+}
+else{
+
+	cX = closestEnemyX()
+	cY = closestEnemyY()
+	
+	shootAt(cX, cY)
+
+}
