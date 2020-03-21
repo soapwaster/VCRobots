@@ -52,5 +52,25 @@ public class Position2D {
 		return "[" + x + "," + y + "]"; 
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Position2D other = (Position2D) obj;
+		if(other.x == x && other.y == y) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 
 }
