@@ -49,7 +49,7 @@ public class RobotBattle
         Option robot = Option.builder("r")
         			   .argName("name,type,positionX,positionY+")
         			   .desc("robot players (up to "+maxPlayers+") type can be one of the following <Default, Shooter, Dummy>."
-        			   		+ " In case of a custom robot, put the filename with the behaviour")
+        			   		+ " In case of a custom robot, put the filename with the behaviour. If it doesn't exist the Default behaviour will be used")
         			   .numberOfArgs(maxPlayers)
         			   .hasArgs()
         			   .required()
