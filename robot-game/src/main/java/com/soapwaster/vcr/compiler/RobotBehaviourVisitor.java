@@ -243,8 +243,8 @@ public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
 		case "shootAt":{
 			int shootAtX = visit(ctx.methodCallArguments().expr(0)).asInteger().intValue();
 			int shootAtY = visit(ctx.methodCallArguments().expr(1)).asInteger().intValue();
-			
-			Position2D shootPos = MathUtils.computePositionGivenRange(robot.getPosition(), new Position2D(shootAtX, shootAtY, false), robot.getStat().getRange());
+
+		    Position2D shootPos = MathUtils.computePositionGivenRange(robot.getPosition(), new Position2D(shootAtX, shootAtY, false), robot.getStat().getRange());
 			
 			Game.getInstance().getMainEventDispatcher().addEvent(new ShootAtEvent(robot, null, shootPos, robot.getStat().getDamage()));
 			break;
@@ -296,9 +296,9 @@ public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
 			return range;
 		}
 		default:
-			break;
+			System.err.println("\n No method '" + methodName + "' exists...exiting the game");
+			System.exit(1);
 		}
-    	
     	return VCRValue.VOID;
     }
 }
