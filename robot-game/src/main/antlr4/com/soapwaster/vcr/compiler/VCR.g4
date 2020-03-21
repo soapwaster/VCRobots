@@ -13,7 +13,6 @@ stat
  : assignment
  | if_stat
  | while_stat
- | log
  | methodCall
  | OTHER {System.err.println("unknown char: " + $OTHER.text);}
  ;
@@ -39,9 +38,6 @@ while_stat
  : WHILE expr stat_block
  ;
 
-log
- : LOG expr SCOL
- ;
  
 methodCall
   : methodName OPAR methodCallArguments CPAR
@@ -71,7 +67,7 @@ expr
 
 atom
  : OPAR expr CPAR #parExpr
- | (INT | FLOAT)  #numberAtom
+ | (INT)          #numberAtom
  | (TRUE | FALSE) #booleanAtom
  | ID             #idAtom
  | STRING         #stringAtom
@@ -91,10 +87,8 @@ MINUS : '-';
 MULT : '*';
 DIV : '/';
 MOD : '%';
-POW : '^';
 NOT : '!';
 
-SCOL : ';';
 ASSIGN : '=';
 OPAR : '(';
 CPAR : ')';
@@ -107,7 +101,6 @@ NIL : 'nil';
 IF : 'if';
 ELSE : 'else';
 WHILE : 'while';
-LOG : 'log';
 
 ID
  : [a-zA-Z_] [a-zA-Z_0-9]*
@@ -115,11 +108,6 @@ ID
 
 INT
  : [0-9]+
- ;
-
-FLOAT
- : [0-9]+ '.' [0-9]* 
- | '.' [0-9]+
  ;
 
 STRING
