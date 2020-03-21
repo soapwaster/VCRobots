@@ -242,7 +242,7 @@ public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
 			int moveToX = visit(ctx.methodCallArguments().expr(0)).asInteger().intValue();
 			int moveToY = visit(ctx.methodCallArguments().expr(1)).asInteger().intValue();
 			
-			Position2D movePos = MathUtils.computePositionGivenRange(robot.getPosition(), new Position2D(moveToX, moveToY), robot.getStat().getRange());
+			Position2D movePos = MathUtils.computePositionGivenRange(robot.getPosition(), new Position2D(moveToX, moveToY, false), robot.getStat().getRange());
 	
 			Game.getInstance().getMainEventDispatcher().addEvent(new MoveToEvent(robot, robot, movePos));
 			break;
@@ -251,7 +251,7 @@ public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
 			int shootAtX = visit(ctx.methodCallArguments().expr(0)).asInteger().intValue();
 			int shootAtY = visit(ctx.methodCallArguments().expr(1)).asInteger().intValue();
 			
-			Position2D shootPos = MathUtils.computePositionGivenRange(robot.getPosition(), new Position2D(shootAtX, shootAtY), robot.getStat().getRange());
+			Position2D shootPos = MathUtils.computePositionGivenRange(robot.getPosition(), new Position2D(shootAtX, shootAtY, false), robot.getStat().getRange());
 			
 			Game.getInstance().getMainEventDispatcher().addEvent(new ShootAtEvent(robot, null, shootPos, robot.getStat().getDamage()));
 			break;
@@ -264,7 +264,6 @@ public class RobotBehaviourVisitor extends VCRBaseVisitor<VCRValue> {
 			
 			VCRValue inRange = new VCRValue(robot.inRange(inRangePos));
 			
-//			System.out.println(robot + " " + robot.getPosition() + " : is " + inRangePos + " in my range ? " + inRange);
 			return inRange;
 		}
 		case "closestEnemyX":{
