@@ -72,17 +72,17 @@ A robot in its behavior .vcr file can do many things. It can:
 - have while loops
 - call game-specific methods:
 	
-	- gameX() :- returns game space WIDTH-1 (so that it doesn't overflow)
-	- gameY() :- returns game space HEIGHT-1 (so that it doesn't overflow)
-	- currentX() :- retrieves robot current X position in the game space
-	- currentY() :- retrieves robot current Y position in the game space
-	- range() :- returns robot's range
-	- hp() :- returns robot's health
-	- closestEnemyX() :- retrieves robot's nearest enemy current X position 
-	- closestEnemyY() :- retrieves robot's nearest enemy current Y position 
-	- moveTo(X,Y) :- tries to move robot to [X,Y]. If it is not reachable because of its current range, then the robot is moved to the farthest position according to the range
-	- shootAt(X,Y) :- tries to shoot at [X,Y]. If it is not reachable because of its current range, then the robot shoots to the farthest position according to the range. If the shot hits an enemy, that enemy's health is decreased by an amount equal to the damage attribute
-	- inRange(X,Y) :- returns whether the position [X,Y] is reachable within robots range
+	- **gameX()** [int] :- returns game space WIDTH-1 (so that it doesn't overflow)
+	- **gameY()** [int] :- returns game space HEIGHT-1 (so that it doesn't overflow)
+	- **currentX()** [int] :- retrieves robot current X position in the game space
+	- **currentY()** [int] :- retrieves robot current Y position in the game space
+	- **range()** [int] :- returns robot's range
+	- **hp()** [int] :- returns robot's health
+	- **closestEnemyX()** [int] :- retrieves robot's nearest enemy current X position 
+	- **closestEnemyY()** [int] :- retrieves robot's nearest enemy current Y position 
+	- **moveTo(X,Y)** [void] :- tries to move robot to [X,Y]. If it is not reachable because of its current range, then the robot is moved to the farthest position according to the range
+	- **shootAt(X,Y)** [void] :- tries to shoot at [X,Y]. If it is not reachable because of its current range, then the robot shoots to the farthest position according to the range. If the shot hits an enemy, that enemy's health is decreased by an amount equal to the damage attribute
+	- **inRange(X,Y)** [bool] :- returns whether the position [X,Y] is reachable within robots range
 
 Whenever the robot moves, shoot or checks whether a position is in its range, it does it by moving towards the shorterst path within the game space.
 ### How to write an AI
@@ -119,21 +119,21 @@ However, this here's a guideline on how to do each of the capabilities defined b
 For further information, look at VCR.g4.
 Now let's look at an AI example. We want to examine the Default Robot behavior defined in "*src/main/resources/robot_ai/default.vcr*".
 
-		myX = currentX()
-		myY = currentY()
-		x = closestEnemyX()
-		y = closestEnemyY()
-		
-		if(inRange(x,y)){
-			shootAt(x,y)
-		}
-		else{
-			i = 10
-			while(i >= 5){
-				moveTo(x+30,y+30)
-				i = i - 1
-				}
-		}
+	myX = currentX()
+	myY = currentY()
+	x = closestEnemyX()
+	y = closestEnemyY()
+	
+	if(inRange(x,y)){
+		shootAt(x,y)
+	}
+	else{
+		i = 10
+		while(i >= 5){
+			moveTo(x+30,y+30)
+			i = i - 1
+			}
+	}
 It tries to find whether the closes enemy is in range. If it is, then it shoots to it. Otherwise it moves 6 times diagonally towards the enemy, making 42 game unit steps at the time.
 
 ## Improvements and Tradeoffs
