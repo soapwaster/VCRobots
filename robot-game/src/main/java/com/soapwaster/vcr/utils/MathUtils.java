@@ -53,22 +53,20 @@ public class MathUtils {
 		double directionAngle = MathUtils.directionAngle(from, to);
 		
 		//find the two components of the 2D vector of magnitude range having an angle of directionAngle
-		double finalX = (double) from.getX() + (Math.cos(directionAngle) * (double) range);
-		double finalY = (double) from.getY() + (Math.sin(directionAngle) * (double) range);
+		double farthestX = (double) from.getX() + (Math.cos(directionAngle) * (double) range);
+		double farthestY = (double) from.getY() + (Math.sin(directionAngle) * (double) range);
 		
-//		System.out.println("Want to get " + to + " with " + range + " from " + from);
+		Position2D farthestPosition = new Position2D((int) farthestX, (int) farthestY);
 		
-		Position2D finalPosition = new Position2D((int) finalX, (int) finalY);
-		
-		//non normalized position, since distance finds the non normalized distance 
-		Position2D nonNormalizedPosition = new Position2D((int) finalX, (int) finalY, false);
+		//non normalized farthest position, since distance finds the non normalized distance 
+		Position2D nonNormalizedFarthestPosition = new Position2D((int) farthestX, (int) farthestY, false);
 		
 		//the second point is reachable within the range
-		if(distance(from, to) < distance(from, nonNormalizedPosition)) {
-			return to;
+		if(distance(from, to) < distance(from, nonNormalizedFarthestPosition)) {
+			return new Position2D(to.getX(), to.getY());
 		}
 		
-		return finalPosition;
+		return farthestPosition;
 
 	}
 }
