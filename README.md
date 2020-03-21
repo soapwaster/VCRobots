@@ -31,11 +31,32 @@ This will show an help message that guides you towards how to customize your gam
 - -pi \<**interval**\> milliseconds after each powerup (default: 300)
 - -rp \<**arg**\>  robots initial positions. Either 'true' or 'false' (default: false)
 - -r \<**name,type,positionX,positionY**+> robot players (from 2, up to 4) [**required**]
-	* **type** can be one of the following <Default, Shooter, Dummy>. In case of a custom robot, put the path to the behavior.
+	* **type** can be one of the following <Default, Shooter, Dummy>. In case of a custom robot, put the path to the behavior. If the file cannot be found, the Default behaviour will be used
 ---
 As an example we want to run a game between 3 players, all with the default behavior, starting in random positions in a 2000 x 3000 game space. The command would be:
 
 		java -jar target/VCRobots-0.1-jar-with-dependencies.jar -r Valerio,Default,300,300 Nino,Default,900,900 Pino,Default,500,400 -gs 2000 3000 -rp true
+
+---
+Now suppose we want an use a custom behaviour specified in "src/main/resources/robot_ai" saved in hider.vcr that goes in the upper right corner and shoots only when a target is nearby. Moreover, power-ups should be spawned every second. The hider.vcr file looks like this:
+
+	x = currentX()
+	y = currentY()
+
+	desiredX = gameX() - 30
+	desiredY = 30
+
+	if(x != desiredX && y != desiredY){
+		moveTo(desiredX, desiredY)
+	}
+	else{
+		cX = closestEnemyX()
+		cY = closestEnemyY()
+		shootAt(cX, cY)
+	}
+To execute the jar file :
+		
+		java -jar target/VCRobots-0.1-jar-with-dependencies.jar -r Valerio,src/main/resources/robot_ai/hider.vcr,300,300 Nino,Default,900,900 Pino,Default,500,400 -rp true -pi 1000
 
 ## Game rules
 It is time to know how the game works.</br>
@@ -156,10 +177,11 @@ Lastly, by making communication pass via an Event Bus, transitioning towards a c
 ## Future Improvements with unlimited time
 
  1. Improve error handling. As of now, only basic errors are handled
- 2. Security is taken into account, for example no Java methods can be directly called via the code, it would be helpful not to show syntax errors when writing an AI
- 3. Extend the grammar
- 4. Possibility to update the AI behavior file in real time, so that you can debug the behavior without having to re-compile the project. This would take some effort, but would be a nice feature to adapt to enemies
- 5. Client / Server architecture 
- 6. Introduction of States for Robots
- 7. An AI that improves thanks to reinforcement learning
+ 2. Security is taken into account, for example no Java methods can be directly called via the code, it would be helpful not to show syntax errors when executing an AI
+ 3.  A logging system that reports detailed erros
+ 4. Extend the grammar
+ 5. Possibility to update the AI behavior file in real time, so that you can debug the behavior without having to re-compile the project. This would take some effort, but would be a nice feature to adapt to enemies
+ 6. Client / Server architecture 
+ 7. Introduction of States for Robots
+ 8. An AI that improves thanks to reinforcement learning
 
