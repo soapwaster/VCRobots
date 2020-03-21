@@ -5,9 +5,13 @@ y = closestEnemyY()
 
 if(inRange(x,y)){
 	shootAt(x,y)
+
 }
 else{
-	moveTo(x+90,y+90)
-    shootAt(x,y)
-    log (y);
+	i = 10
+	while(i >= 5){
+		moveTo(x+30,y+30)
+		i = i - 1
+	}	
+	
 }
