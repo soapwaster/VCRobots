@@ -88,6 +88,11 @@ public abstract class Robot implements Listener{
 	public Stats getStat() {
 		return stats;
 	}
+	
+	public void setPosition(Position2D pos) {
+		this.position = pos;
+	}
+	
 	public Position2D getPosition() {
 		return position;
 	}
@@ -119,7 +124,7 @@ public abstract class Robot implements Listener{
 	 * @param position desired position
 	 */
 	public void moveTo(Position2D position) {
-		this.position = new Position2D(position.getX(), position.getY());	 
+		this.position = new Position2D(position.getX(), position.getY());
 	}
 	
 	/**
