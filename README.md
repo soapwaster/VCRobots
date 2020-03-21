@@ -4,8 +4,8 @@ VCRobots is a *programming* robot battle simulators. That means that players com
 
 ## Game architecture 
 Each robot (from 2 to 4) has an AI behavior that is executed independently by its own thread. The behavior can be one of the pre-defined one (*Shooter*, *Default*, *Dummy*) or created by writing it in a .vcr file. The game takes the .vcr file containing the behavior, parses it into an AST (Abstract Syntax Tree) that is then visited by the **Visitor Pattern** and executed. </br>
-To enforce decoupling, communication such as *movement*, *shooting* or *death* notification passes via an **Event Bus**, a single, asynchronous, blocking priority deque (for concurrency, since many threads access it concurrently) that takes every event (containing sender, receiver and payload) and dispatches it to the receiver if specified, otherwise to every listener, which in this case are robots, but could be any type of entity. Thanks to the Visitor Pattern, FIFO ordering w.r.t. a single robot is maintained. Concurrent events coming from different sources will be inserted according to the O.S. scheduler, that assures fairness in event dispatching. The event bus is also used to dispatch power-ups troughout the game, in order to make it more random.</br>
-The robot battle taking place can be visualized via a view written using the Java Swing library. At any time, it shows for each robot : *HP, Range, Damage* current values, together with its current position and last shot position. Robots do not know of the existence of this view, they just notify their **Observers** (in this case the view) trough the **Oberver Pattern**. The view also shows a log of what has happened in the battle. The view can be resized without altering robots relative game positions</br>
+To enforce decoupling, communication such as *movement*, *shooting* or *death* notification passes via an **Event Bus**, a single, asynchronous, blocking priority deque (for concurrency, since many threads access it concurrently) that takes every event (containing sender, receiver and payload) and dispatches it to the receiver if specified, otherwise to every listener, which in this case are robots, but could be any type of entity. Thanks to the Visitor Pattern, FIFO ordering w.r.t. a single robot is maintained (except with "*Dead*" events which are high priority events and are executed as soon as possible). Concurrent events coming from different sources will be inserted according to the O.S. scheduler, that assures fairness in event dispatching. The event bus is also used to dispatch power-ups troughout the game, in order to make it more random.</br>
+The robot battle taking place can be visualized via a view written using the Java Swing library. At any time, it shows for each robot : *HP, Range, Damage* current values, together with its current position and last shot position. Robots do not know of the existence of this view, they just notify their **Observers** (in this case the view) trough the **Oberver Pattern**. The view also shows a log of what has happened in the battle. The view can be resized without altering robots relative game positions.</br>
 Only one battle at the time can take place since the **Game** entity is a **Singleton**.
 
  ## Compilation instructions 
@@ -136,14 +136,14 @@ Now let's look at an AI example. We want to examine the Default Robot behavior d
 		}
 It tries to find whether the closes enemy is in range. If it is, then it shoots to it. Otherwise it moves 6 times diagonally towards the enemy, making 42 game unit steps at the time.
 
-## Improvements
+## Improvements and Tradeoffs
 Some things have been left partly "undone" on purpose to show how the game could be extended, and with how much effort.
 
 To add a new attribute to the robot, in order to distinguish movement range from shooting range and have power-ups that increase the newly defined range. To do so, we have to add the attribute and new accessors to the RobotStats.java class , add new **Decorators** if we want new power-ups. The Power up dispatcher (StatsIncreaser.java) does not know anything about the instantiation of new decorators. Those are handled in the StatsFactory class.
 
 To have an unbounded number of players, we could do it by adding a Color generator. This is the only thing to do.
 
-To improve fairness and have an event queue for each robot running independently its own thread, we should modify the EventDispatcher and the EventDispatcherExecutor classes. Producers and Consumers only know that they have to add and retrieve Events, they do not care about the implementation.
+To improve fairness and have an event queue for each robot running independently its own thread, we should modify the EventDispatcher and the EventDispatcherExecutor classes. Producers and Consumers only know that they have to add and retrieve Events, they do not care about the implementation. This could be done to avoid possible starvation in case of infinite loops in a behavior.
 
 To add a new type of robot, we have to introduce a new class that inherits from the Robot class. No other class knows about its implementation. They use the Robot abstract class.
 
@@ -152,3 +152,14 @@ The same goes for the behaviors. We have to add a file in "*_src/main/resources/
 Every event is executed by RobotExecutor. It makes it so that event handling is decoupled from the robot class itself, but I decided to use a switch chase instead of polymorphism, to avoid coupling Events to Robot, in case we may want to add new entities as listeners, such as blocking walls that have to be shot to be destroyed.
 
 Lastly, by making communication pass via an Event Bus, transitioning towards a client server architecture would not require a complete refactor, since we may introduce via an **Adapter Pattern** compliance with a 3rd party library that supports Publisher/Subscriber via the Web without changing how threads intract with the EventDispatcher class.
+
+## Future Improvements with unlimited time
+
+ 1. Improve error handling. As of now, only basic errors are handled
+ 2. Security is taken into account, for example no Java methods can be directly called via the code, it would be helpful not to show syntax errors when writing an AI
+ 3. Extend the grammar
+ 4. Possibility to update the AI behavior file in real time, so that you can debug the behavior without having to re-compile the project. This would take some effort, but would be a nice feature to adapt to enemies
+ 5. Client / Server architecture 
+ 6. Introduction of States for Robots
+ 7. An AI that improves thanks to reinforcement learning
+
