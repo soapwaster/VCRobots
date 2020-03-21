@@ -12,7 +12,7 @@ public class CustomRobot extends Robot {
 		try {
 			behaviour = new BehaviourFactory(this).getCustomBehaviour(behaviourFilename);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("\nThere was an error with your file. Check its path. Using Default behaviour");
 		} catch (BehaviourFactoryException e) {
 			e.printStackTrace();
 		}
