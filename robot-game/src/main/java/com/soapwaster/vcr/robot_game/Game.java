@@ -1,9 +1,11 @@
 package com.soapwaster.vcr.robot_game;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.soapwaster.vcr.event_handling.EventDispatcher;
+import com.soapwaster.vcr.robot.RoboRunner;
 import com.soapwaster.vcr.robot.Robot;
 import com.soapwaster.vcr.stats.StatsIncreaser;
 import com.soapwaster.vcr.utils.MathUtils;
@@ -20,6 +22,8 @@ public class Game {
 	private boolean gameEnded = false;
 	
 	private List<Robot> robotPlayers;
+	
+	private long powerupInterval;
 	
 	private final EventDispatcher eventDispatcher = new EventDispatcher();
 	
@@ -70,6 +74,36 @@ public class Game {
 		}
 	}
 	
+	 /**
+     * Sets up game, in particular:
+     * <ul>
+     * <li> Robots
+     * <li> Positions
+     * <li> Game width
+     * <li> Game height
+     * <li> Power-up interval
+     * </ul>
+     * @param robots list of robots
+     * @param randomPositions true if robots positions should be random
+     * @param gameWidth game space width
+     * @param gameHeight game space height
+     * @param powerupInterval2 
+     */
+	public void setupGame(List<Robot> robots, boolean randomPositions, int gameWidth, int gameHeight, Integer powerupInterval) {
+		for (Robot robot : robots) {
+			if(randomPositions) {
+				int xRand = (int) (Math.random() * (double) gameWidth);
+				int yRand = (int) (Math.random() * (double) gameHeight);
+				robot.setPosition(new Position2D(xRand, yRand));
+			}
+			addRobot(robot);
+		}
+		Game.WIDTH = gameWidth;
+		Game.HEIGHT = gameHeight;
+		this.powerupInterval = powerupInterval;
+		
+	}
+	
 	/**
 	 * Starts the game, in particular the:
 	 * <ul>
@@ -81,30 +115,44 @@ public class Game {
 	 */
 	public void startGame() {
 		
-		StatsIncreaser statsIncreaser = new StatsIncreaser(robotPlayers);
+		StatsIncreaser statsIncreaser = new StatsIncreaser(robotPlayers, powerupInterval);
+		List<RoboRunner> roboRunners = new ArrayList<>();
 		RobotGameView robotGameView = new RobotGameView(robotPlayers);
 		Thread statsThread = new Thread(statsIncreaser);
+		List<Thread> roboThreads = new ArrayList<>();
+		
+		for (Robot robot : robotPlayers) {
+			RoboRunner runner = new RoboRunner(robot);
+			roboRunners.add(runner);
+			roboThreads.add(new Thread(runner));
+		}
 		
 		robotGameView.showBattleGround();
 		eventDispatcher.startDispatcher();
 		statsThread.start();
 		
+		for (Thread roboThread : roboThreads) {
+			roboThread.start();
+		}
+
 		while(!gameEnded) {
-			for (Robot robot : robotPlayers) {
-				robot.runBehaviour();
-				//wait a little, to make the whole process enjoyable
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 		
-		//stop giving powerups since the game has ended
+		//stop giving powerups and stop the winner's thread since the game has ended
 		statsIncreaser.stop();
+		for (RoboRunner roboRunner : roboRunners) {
+			roboRunner.stop();
+		}
 		
 		try {
+			for (Thread roboThread : roboThreads) {
+				roboThread.join();
+			}
 			statsThread.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
