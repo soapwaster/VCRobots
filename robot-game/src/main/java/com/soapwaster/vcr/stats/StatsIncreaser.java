@@ -10,15 +10,11 @@ public class StatsIncreaser implements Runnable{
 	
 	private List<Robot> robotPlayers;
 	private boolean running = true;
-	private long powerupInterval = 100;
-	
-	public StatsIncreaser(List<Robot> robotPlayers) {
-		super();
-		this.robotPlayers = robotPlayers;
-	}
+	private long powerupInterval;
 	
 	public StatsIncreaser(List<Robot> robotPlayers, long powerupInterval) {
-		this(robotPlayers);
+		super();
+		this.robotPlayers = robotPlayers;
 		this.powerupInterval  = powerupInterval;
 	}
 
