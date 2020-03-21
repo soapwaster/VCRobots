@@ -31,12 +31,11 @@ public class RobotExecutor {
 		switch (eventName) {
 		case MoveTo:{
 			MoveToEvent moveEvent = (MoveToEvent) event;
-			
 			Position2D movePos = moveEvent.getPosition();
+	
 			robot.moveTo(movePos);
-			robot.notifySupportMovement(movePos);
-			
-			robot.notifySupportLog("moved to " + moveEvent.getPosition());
+			robot.notifySupportMovement(robot.getPosition());	
+			robot.notifySupportLog("moved to " + robot.getPosition());
 			break;
 		}
 		case ShootAt:{
