@@ -78,15 +78,15 @@ It is time to know how the game works.</br>
 ### Game mechanics
 The game features a battle simulation between 2 to 4 robots. The robots start in various positions of the game arena and behave accordingly to their AI. There exist three type of pre-definided robot AIs:
 * **Default** : moves and shoot
-* **Shooter**: moves towards the closest target and shoots around four times
+* **Shooter**: moves towards the closest target and shoots towards it twice
 * **Dummy**: doesn't do anything, useful for testing new AIs
 
 However new AIs can be defined as input to the game.
 
 Every robot has three main attributes:
-- HP : health points (when reaches 0 the robot dies)
-- Range : amount of game units the robot can move or shoot with a step
-- Damage : amount of health removed a robot is it with a shot
+- HP : health points (when reaches 0 the robot dies) (Default/Shooter/Dummy: 100 HP)
+- Range : amount of game units the robot can move or shoot with a step (Default: 30 / Shooter: 50)
+- Damage : amount of health removed a robot is it with a shot (Default: 5 / Shooter: 1)
 
 At every interval of time a power-up is delivered to one of the alive robots. Every power-up has its own unique features. There are three types:
 
