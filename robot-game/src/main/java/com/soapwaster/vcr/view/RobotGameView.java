@@ -258,7 +258,7 @@ class RobotViewPanel extends JPanel {
         	
         	Position2D robotPosition = getScaledPosition(robot.getPosition());
         	g.setColor(robotViewStats.get(robot).getColor());
-        	g.fillRect(robotPosition.getX(), robotPosition.getY(), 10, 10);
+        	g.fillRect(robotPosition.getX()-5, robotPosition.getY()-5, 10, 10);
         	
         	int lineSize = 4;
         	Position2D hitmarkPosition = getScaledPosition(robotViewStats.get(robot).getLastHitmark());
