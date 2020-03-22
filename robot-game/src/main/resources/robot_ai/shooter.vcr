@@ -1,3 +1,7 @@
 x = closestEnemyX()
 y = closestEnemyY()
+
+moveTo(x,y)
+
+shootAt(x,y)
 shootAt(x,y)
