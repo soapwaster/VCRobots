@@ -58,20 +58,35 @@ To execute the jar file :
 		
 		java -jar target/VCRobots-0.1-jar-with-dependencies.jar -r Valerio,src/main/resources/robot_ai/hider.vcr,300,300 Nino,Default,900,900 Pino,Default,500,400 -rp true -pi 1000
 
+### Packages structure
+Packages have this semantic structure: 
+
+	└── com
+	    └── soapwaster
+		└── vcr
+		    ├── behaviour //AI behaviours' definitions and Factory 
+		    ├── compiler //ANTLR4 output classes + AI Visitor (RobotBehaviourVisitor)
+		    ├── event_handling //Events and Event Bus
+		    ├── robot //Robot related classes
+		    ├── robot_game //RobotBattle (main) plus Game object
+		    ├── stats // Power-ups
+		    ├── utils // Math utilities
+		    └── view // View related classes
+
 ## Game rules
 It is time to know how the game works.</br>
 ### Game mechanics
 The game features a battle simulation between 2 to 4 robots. The robots start in various positions of the game arena and behave accordingly to their AI. There exist three type of pre-definided robot AIs:
 * **Default** : moves and shoot
-* **Shooter**: moves towards the closest target and shoots around four times
+* **Shooter**: moves towards the closest target and shoots towards it twice
 * **Dummy**: doesn't do anything, useful for testing new AIs
 
 However new AIs can be defined as input to the game.
 
 Every robot has three main attributes:
-- HP : health points (when reaches 0 the robot dies)
-- Range : amount of game units the robot can move or shoot with a step
-- Damage : amount of health removed a robot is it with a shot
+- HP : health points (when reaches 0 the robot dies) (Default/Shooter/Dummy: 100 HP)
+- Range : amount of game units the robot can move or shoot with a step (Default: 30 / Shooter: 50)
+- Damage : amount of health removed a robot is it with a shot (Default: 5 / Shooter: 1)
 
 At every interval of time a power-up is delivered to one of the alive robots. Every power-up has its own unique features. There are three types:
 
@@ -86,6 +101,7 @@ The game arena is a X by Y game unit rectangle and robots can move freely from t
 ### Robot capabilities
 A robot in its behavior .vcr file can do many things. It can:
 
+- comments ( # )
 - variable assignments
 - compute integer arithmetical expressions ( + - * / % )
 - compute comparison expressions ( && || ! == != < > <= >= )
@@ -133,9 +149,10 @@ However, this here's a guideline on how to do each of the capabilities defined b
 - game-specific methods
 	
 	  methodName(expression, expression)
-	  shootAt(closestX(), x * 5)
+	  shootAt(closestEnemyX(), x * 5)
 	  moveTo(x,y)
 	  inRange(20,100)
+
 
 For further information, look at VCR.g4.
 Now let's look at an AI example. We want to examine the Default Robot behavior defined in "*src/main/resources/robot_ai/default.vcr*".
