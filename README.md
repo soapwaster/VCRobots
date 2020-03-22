@@ -16,7 +16,14 @@ The game comes in a Maven project with the following dependencies :
  - Apache CLI - command line arguments parsing
  
 To compile the project, you should have **Java 11** installed.</br>
-Clone this repository, open a terminal and move to the main directory containing the *pom.xml* file and run:
+Clone this repository in some directory with:
+
+		git clone https://github.com/soapwaster/VCRobots.git
+
+Open a terminal in that directory and move to the main one containing the *pom.xml* file with:
+
+		cd VCRobots/robot-game/
+and run:
 
 		mvn install clean
 		mvn package
