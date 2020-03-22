@@ -101,6 +101,7 @@ The game arena is a X by Y game unit rectangle and robots can move freely from t
 ### Robot capabilities
 A robot in its behavior .vcr file can do many things. It can:
 
+- comments ( # )
 - variable assignments
 - compute integer arithmetical expressions ( + - * / % )
 - compute comparison expressions ( && || ! == != < > <= >= )
@@ -151,6 +152,7 @@ However, this here's a guideline on how to do each of the capabilities defined b
 	  shootAt(closestX(), x * 5)
 	  moveTo(x,y)
 	  inRange(20,100)
+
 
 For further information, look at VCR.g4.
 Now let's look at an AI example. We want to examine the Default Robot behavior defined in "*src/main/resources/robot_ai/default.vcr*".
