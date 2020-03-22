@@ -98,6 +98,8 @@ Only one player at the time can win.
 ### Arena layout
 The game arena is a X by Y game unit rectangle and robots can move freely from the position [0,0] to [X-1, Y-1]. Whenever a robot surpasses arena bounds, it is teleported to the opposite side of the arena. Every Robot is identified in the arena by a color.
 
+![Imgur](https://i.imgur.com/rWN57Zd.png)
+
 ### Robot capabilities
 A robot in its behavior .vcr file can do many things. It can:
 
