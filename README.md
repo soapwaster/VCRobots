@@ -58,6 +58,21 @@ To execute the jar file :
 		
 		java -jar target/VCRobots-0.1-jar-with-dependencies.jar -r Valerio,src/main/resources/robot_ai/hider.vcr,300,300 Nino,Default,900,900 Pino,Default,500,400 -rp true -pi 1000
 
+### Packages structure
+Packages have this semantic structure: 
+
+	└── com
+	    └── soapwaster
+		└── vcr
+		    ├── behaviour //AI behaviours' definitions and Factory 
+		    ├── compiler //ANTLR4 output classes + AI Visitor (RobotBehaviourVisitor)
+		    ├── event_handling //Events and Event Bus
+		    ├── robot //Robot related classes
+		    ├── robot_game //RobotBattle (main) plus Game object
+		    ├── stats // Power-ups
+		    ├── utils // Math utilities
+		    └── view // View related classes
+
 ## Game rules
 It is time to know how the game works.</br>
 ### Game mechanics
