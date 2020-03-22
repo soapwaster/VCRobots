@@ -149,7 +149,7 @@ However, this here's a guideline on how to do each of the capabilities defined b
 - game-specific methods
 	
 	  methodName(expression, expression)
-	  shootAt(closestX(), x * 5)
+	  shootAt(closestEnemyX(), x * 5)
 	  moveTo(x,y)
 	  inRange(20,100)
 
