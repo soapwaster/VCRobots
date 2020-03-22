@@ -15,8 +15,8 @@ The game comes in a Maven project with the following dependencies :
  - JUnit - testing
  - Apache CLI - command line arguments parsing
  
-To compile the project, you should have **Java 11** installed.
-Open a terminal and move in the main directory containing the pom.xml file and run:
+To compile the project, you should have **Java 11** installed.</br>
+Clone this repository, open a terminal and move to the main directory containing the *pom.xml* file and run:
 
 		mvn install clean
 		mvn package
@@ -96,7 +96,7 @@ At every interval of time a power-up is delivered to one of the alive robots. Ev
 
 Only one player at the time can win.
 ### Arena layout
-The game arena is a X by Y game unit rectangle and robots can move freely from the position [0,0] to [X-1, Y-1]. Whenever a robot surpasses arena bounds, it is teleported to the opposite side of the arena.
+The game arena is a X by Y game unit rectangle and robots can move freely from the position [0,0] to [X-1, Y-1]. Whenever a robot surpasses arena bounds, it is teleported to the opposite side of the arena. Every Robot is identified in the arena by a color.
 
 ### Robot capabilities
 A robot in its behavior .vcr file can do many things. It can:
@@ -180,6 +180,8 @@ Some things have been left partly "undone" on purpose to show how the game could
 To add a new attribute to the robot, in order to distinguish movement range from shooting range and have power-ups that increase the newly defined range. To do so, we have to add the attribute and new accessors to the RobotStats.java class , add new **Decorators** if we want new power-ups. The Power up dispatcher (StatsIncreaser.java) does not know anything about the instantiation of new decorators. Those are handled in the StatsFactory class.
 
 To have an unbounded number of players, we could do it by adding a Color generator. This is the only thing to do.
+
+To extend the set of game-specific methods, we have to add a case in RoborBehaviourVisitor.java
 
 To improve fairness and have an event queue for each robot running independently its own thread, we should modify the EventDispatcher and the EventDispatcherExecutor classes. Producers and Consumers only know that they have to add and retrieve Events, they do not care about the implementation. This could be done to avoid possible starvation in case of infinite loops in a behavior.
 
