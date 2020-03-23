@@ -135,7 +135,7 @@ public class Game {
 			roboThread.start();
 		}
 
-		while(!gameEnded) {
+		while (!gameEnded) {
 			try {
 				Thread.sleep(300);
 			} catch (InterruptedException e) {
@@ -173,11 +173,11 @@ public class Game {
     	int minDistance = Game.WIDTH * Game.WIDTH;
     	Robot closestRobot = null;
 		for (Robot robotFoe : robotPlayers) {
-			if(robotFoe.equals(robot) || robot.isDead()) {
+			if (robotFoe.equals(robot) || robot.isDead()) {
 				continue;
 			}
 			int distance = MathUtils.distance(robot.getPosition(), robotFoe.getPosition());
-			if(distance < minDistance) {
+			if (distance < minDistance) {
 				minDistance = distance;
 				closestRobot = robotFoe;
 			}
@@ -192,7 +192,7 @@ public class Game {
      */
     public int getClosestRobotXFrom(Robot robot) {
     	Robot closestRobot = getClosestRobotFrom(robot);
-    	if(closestRobot == null) {
+    	if (closestRobot == null) {
     		return -1;
     	}
     	return closestRobot.getPosition().getX();
@@ -205,7 +205,7 @@ public class Game {
      */
     public int getClosestRobotYFrom(Robot robot) {
     	Robot closestRobot = getClosestRobotFrom(robot);
-    	if(closestRobot == null) {
+    	if (closestRobot == null) {
     		return -1;
     	}
     	return closestRobot.getPosition().getY();
